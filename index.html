@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gobernanza de Skills IA - Sky</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #101827;
+      --panel-2: #172033;
+      --line: #27415f;
+      --text: #eef5ff;
+      --muted: #9aa9bf;
+      --soft: #718198;
+      --sky: #38bdf8;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --violet: #a78bfa;
+      --red: #fb7185;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% -10%, rgba(56,189,248,.16), transparent 32%),
+                  radial-gradient(circle at 90% 0%, rgba(167,139,250,.14), transparent 28%),
+                  var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    .shell { width: min(1440px, 100%); margin: 0 auto; padding: 28px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      padding: 18px 0 28px; border-bottom: 1px solid rgba(148,163,184,.16);
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--sky), var(--violet));
+      display: grid; place-items: center; font-weight: 900; color: #06111f;
+    }
+    .brand h1 { font-size: clamp(24px, 3.2vw, 42px); line-height: 1.05; letter-spacing: 0; }
+    .brand p { color: var(--muted); font-size: 14px; margin-top: 5px; }
+    nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    nav a {
+      color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 800;
+      border: 1px solid rgba(148,163,184,.18); border-radius: 999px; padding: 8px 12px;
+      background: rgba(15,23,42,.5);
+    }
+
+    section { padding: 42px 0; }
+    .section-head { margin-bottom: 22px; max-width: 980px; }
+    .tag {
+      display: inline-flex; color: var(--sky); border: 1px solid rgba(56,189,248,.35);
+      background: rgba(56,189,248,.09); border-radius: 999px; padding: 5px 12px;
+      font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.6px;
+      margin-bottom: 14px;
+    }
+    h2 { font-size: clamp(24px, 2.6vw, 36px); letter-spacing: 0; margin-bottom: 8px; }
+    .section-head p { color: var(--muted); font-size: 16px; }
+
+    .summary-grid {
+      display: grid; grid-template-columns: 1.1fr .9fr .9fr; gap: 16px; margin-top: 24px;
+    }
+    .summary-box, .rule-card, .skill-card, .install-card {
+      border: 1px solid rgba(148,163,184,.18);
+      background: linear-gradient(180deg, rgba(23,32,51,.86), rgba(15,23,42,.78));
+      border-radius: 8px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.25);
+    }
+    .summary-box { padding: 22px; min-height: 150px; }
+    .summary-box strong { display: block; font-size: 18px; margin-bottom: 8px; }
+    .summary-box p { color: var(--muted); font-size: 14px; }
+    .summary-box .number { font-size: 36px; font-weight: 900; color: var(--sky); margin-bottom: 6px; }
+
+    .maturity-note {
+      margin-top: 18px; padding: 18px 20px; border-radius: 8px;
+      border: 1px solid rgba(251,191,36,.28);
+      background: linear-gradient(135deg, rgba(251,191,36,.1), rgba(15,23,42,.56));
+      display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: flex-start;
+    }
+    .maturity-note .icon { font-size: 22px; line-height: 1; }
+    .maturity-note strong { display: block; color: #fde68a; margin-bottom: 4px; }
+    .maturity-note p { color: var(--muted); font-size: 14px; }
+
+    .flow-line {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+      margin-top: 18px;
+    }
+    .flow-node {
+      padding: 14px; border-radius: 8px; border: 1px solid rgba(56,189,248,.22);
+      background: rgba(56,189,248,.07); min-height: 84px;
+    }
+    .flow-node b { display: block; font-size: 13px; margin-bottom: 5px; }
+    .flow-node span { color: var(--muted); font-size: 12px; }
+
+    .rules-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .rule-card { padding: 24px; position: relative; overflow: hidden; }
+    .rule-card::before {
+      content: ""; position: absolute; inset: 0 0 auto 0; height: 4px;
+      background: linear-gradient(90deg, var(--sky), transparent);
+    }
+    .rule-card.dev::before { background: linear-gradient(90deg, var(--amber), transparent); }
+    .rule-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+    .rule-title h3 { font-size: 22px; }
+    .pill {
+      display: inline-flex; white-space: nowrap; align-items: center;
+      padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 900;
+      border: 1px solid currentColor;
+    }
+    .pill.locked { color: var(--sky); background: rgba(56,189,248,.1); }
+    .pill.dev { color: var(--amber); background: rgba(251,191,36,.1); }
+    .rule-card p { color: var(--muted); margin-bottom: 15px; }
+    ul { list-style: none; display: grid; gap: 9px; }
+    li { color: var(--muted); font-size: 14px; }
+    li::before { content: "•"; color: var(--sky); font-weight: 900; margin-right: 9px; }
+    .rule-card.dev li::before { color: var(--amber); }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px;
+    }
+    .filter-btn {
+      border: 1px solid rgba(148,163,184,.25); background: rgba(15,23,42,.75);
+      color: var(--muted); border-radius: 999px; padding: 9px 13px;
+      font-weight: 900; font-size: 12px; cursor: pointer;
+    }
+    .filter-btn.active { color: #06111f; background: var(--sky); border-color: var(--sky); }
+    .search {
+      flex: 1; min-width: 240px; border: 1px solid rgba(148,163,184,.25);
+      background: rgba(15,23,42,.75); color: var(--text); border-radius: 999px;
+      padding: 10px 14px; font-size: 13px;
+    }
+
+    .skills-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;
+    }
+    .skill-card { padding: 18px; min-height: 250px; display: flex; flex-direction: column; gap: 12px; }
+    .skill-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .skill-name { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 14px; font-weight: 900; color: #fff; }
+    .level { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; border-radius: 999px; padding: 4px 8px; white-space: nowrap; }
+    .level.immutable { color: var(--sky); border: 1px solid rgba(56,189,248,.35); background: rgba(56,189,248,.08); }
+    .level.dev { color: var(--amber); border: 1px solid rgba(251,191,36,.35); background: rgba(251,191,36,.08); }
+    .skill-card h4 { color: var(--soft); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 3px; }
+    .skill-card p { color: var(--muted); font-size: 13px; }
+    .contract {
+      margin-top: auto; border-top: 1px solid rgba(148,163,184,.14); padding-top: 12px;
+      color: #c7d2fe; font-size: 12px; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    .install-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .install-card { padding: 20px; }
+    .install-card h3 { font-size: 18px; margin-bottom: 8px; }
+    .install-card p { color: var(--muted); font-size: 14px; }
+    .repo-box {
+      margin-top: 16px; padding: 16px; border: 1px solid rgba(52,211,153,.22);
+      border-radius: 8px; background: rgba(52,211,153,.06);
+      font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; color: #d1fae5; font-size: 12px;
+      white-space: pre-wrap;
+    }
+
+    .decision-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .decision {
+      padding: 16px; border: 1px solid rgba(148,163,184,.16); border-radius: 8px;
+      background: rgba(15,23,42,.62);
+    }
+    .decision b { display: block; color: #fff; margin-bottom: 6px; }
+    .decision span { color: var(--muted); font-size: 13px; }
+
+    footer { color: var(--soft); border-top: 1px solid rgba(148,163,184,.16); padding: 22px 0 8px; font-size: 12px; }
+    @media (max-width: 1040px) {
+      .summary-grid, .skills-grid, .install-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow-line, .decision-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 740px) {
+      .shell { padding: 18px; }
+      header, .rules-grid, .summary-grid, .skills-grid, .install-grid, .flow-line, .decision-grid {
+        grid-template-columns: 1fr; display: grid;
+      }
+      nav { justify-content: flex-start; }
+      .rule-title { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div>
+          <h1>Gobernanza de Skills</h1>
+          <p>Modelo para un repo o SDK instalable por cada dev, con estándares fijos y espacio de personalización controlada.</p>
+        </div>
+      </div>
+      <nav>
+        <a href="#modelo">Modelo</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#sdk">SDK</a>
+        <a href="#decision">Criterios</a>
+      </nav>
+    </header>
+
+    <section id="modelo">
+      <div class="section-head">
+        <div class="tag">Idea central</div>
+        <h2>Mismo resultado esperado, distinto grado de control</h2>
+        <p>El flujo completo debe entregar specs, planes, MRs, QA y deploy docs con formato consistente. Lo que cambia es cuánto puede adaptar cada dev el camino para llegar a ese resultado.</p>
+      </div>
+
+      <div class="maturity-note">
+        <div class="icon">⚠️</div>
+        <div>
+          <strong>Inmutable no significa terminado.</strong>
+          <p>Algunos skills marcados como inmutables todavía necesitan refinamiento, pruebas y ajustes. La etiqueta define hacia dónde deben converger: un estándar común de Sky. Mientras maduran, pueden modificarse, pero esos cambios deberían elevar la calidad del core y mantener el contrato de salida del equipo.</p>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="number">01</div>
+          <strong>Core común</strong>
+          <p>Skills con reglas Sky, formatos de entrega y contratos de salida versionados desde un repositorio central.</p>
+        </div>
+        <div class="summary-box">
+          <div class="number">02</div>
+          <strong>Overrides del dev</strong>
+          <p>Ajustes locales para profundidad, pasos, ahorro de tokens, automatización vs revisión manual y estilo de trabajo.</p>
+        </div>
+        <div class="summary-box">
+          <div class="number">03</div>
+          <strong>Salida compatible</strong>
+          <p>Aunque el dev ajuste el método, el flujo debe terminar con artefactos comparables y revisables por el equipo.</p>
+        </div>
+      </div>
+
+      <div class="flow-line">
+        <div class="flow-node"><b>Instalar SDK</b><span>Se baja core + plantillas base.</span></div>
+        <div class="flow-node"><b>Aplicar reglas Sky</b><span>Estándares inmutables por defecto.</span></div>
+        <div class="flow-node"><b>Configurar dev</b><span>Overrides personales por caso de uso.</span></div>
+        <div class="flow-node"><b>Ejecutar pipeline</b><span>Spec, plan, implementación, QA y deploy.</span></div>
+        <div class="flow-node"><b>Validar contrato</b><span>La salida final conserva formato y evidencia.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="rules-grid">
+        <div class="rule-card">
+          <div class="rule-title">
+            <h3>Inmutable</h3>
+            <span class="pill locked">Core estándar</span>
+          </div>
+          <p>Apunta a usarse como estándar común. Puede seguir evolucionando, pero sus cambios deben mejorar el core compartido y respetar reglas del cliente, formatos oficiales, criterios de QA o estructura de entrega.</p>
+          <ul>
+            <li>Protege estándares de Sky, arquitectura, seguridad, releases y formatos de evidencia.</li>
+            <li>Los cambios deberían entrar por PR al repo central, con versión y changelog.</li>
+            <li>No se ajusta por preferencia personal si eso cambia el contrato de salida.</li>
+            <li>Puede modificarse mientras madura, pero para acercarse al estándar requerido, no para fragmentarlo.</li>
+            <li>Sirve para que dos devs generen artefactos comparables aunque trabajen distinto.</li>
+          </ul>
+        </div>
+        <div class="rule-card dev">
+          <div class="rule-title">
+            <h3>Gobernanza por dev</h3>
+            <span class="pill dev">Override local</span>
+          </div>
+          <p>Parte de una base recomendada, pero el dev puede ajustar cómo se ejecuta: más manual, más automático, más corto o más exhaustivo.</p>
+          <ul>
+            <li>Permite quitar pasos para ahorrar tokens si el dev los revisa manualmente.</li>
+            <li>Permite agregar chequeos, prompts, ejemplos o comandos según el repo y el contexto.</li>
+            <li>No debería romper el formato final ni saltear validaciones críticas.</li>
+            <li>Reconoce que la IA no es totalmente determinística y necesita feedback loops.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalogo">
+      <div class="section-head">
+        <div class="tag">Catálogo</div>
+        <h2>Qué hace cada skill y quién lo gobierna</h2>
+        <p>La clasificación no mide importancia. Define si el comportamiento debe quedar fijo por estándar del equipo o si el dev puede adaptarlo sin cambiar el resultado final.</p>
+      </div>
+
+      <div class="toolbar">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="immutable">Inmutables</button>
+        <button class="filter-btn" data-filter="dev">Gobernanza por dev</button>
+        <input class="search" id="search" placeholder="Buscar skill, salida o etapa">
+      </div>
+
+      <div class="skills-grid" id="skills">
+        <article class="skill-card" data-level="immutable" data-search="spec-generator spec dor criterios aceptación">
+          <div class="skill-top"><div class="skill-name">spec-generator</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Convierte DOR, notas o conversaciones en una spec técnica con alcance, supuestos, flujos y criterios.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El formato de spec y los criterios mínimos deben ser comunes para todo el equipo.</p></div>
+          <div class="contract">Salida: spec.md</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-map-subsystem skydocs architecture repo">
+          <div class="skill-top"><div class="skill-name">sky-map-subsystem</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Mapea un repo y genera documentación arquitectural: controllers, eventos, schemas, clientes y estructura.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>SkyDocs necesita una estructura estable para alimentar planificación, debugging y onboarding.</p></div>
+          <div class="contract">Salida: ARCHITECTURE.md</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="spec-impl-planner plan cross repo dependencias">
+          <div class="skill-top"><div class="skill-name">spec-impl-planner</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Toma la spec y SkyDocs para producir un plan con repos afectados, rutas exactas y orden de cambios.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El contrato del plan debe ser confiable para implementación, QA y revisión cross-repo.</p></div>
+          <div class="contract">Salida: plan.md</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-plan-implementer implementación código tokens pasos">
+          <div class="skill-top"><div class="skill-name">sky-plan-implementer</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Ejecuta el plan paso a paso, aplica cambios y deja evidencia técnica de implementación.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Profundidad, orden fino, checkpoints manuales, comandos omitidos y nivel de explicación.</p></div>
+          <div class="contract">Salida: cambios + doc de implementación</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-commit commits formato gitmoji">
+          <div class="skill-top"><div class="skill-name">sky-commit</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Genera commits con convención del proyecto, mensaje claro y alcance controlado.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El historial Git debe mantener formato común para release, auditoría y trazabilidad.</p></div>
+          <div class="contract">Salida: commit estándar</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-create-pr mr merge request template">
+          <div class="skill-top"><div class="skill-name">sky-create-pr</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Arma el MR con template, links, resumen, evidencias y riesgos conocidos.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El equipo necesita MRs comparables, completos y revisables sin depender del estilo personal.</p></div>
+          <div class="contract">Salida: MR listo para revisión</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-generate-test-plan qa test plan casos">
+          <div class="skill-top"><div class="skill-name">sky-generate-test-plan</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Genera plan de QA desde la spec con TCs unitarios, API, browser y manuales.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>La cobertura mínima y el formato de QA no deberían variar por preferencia individual.</p></div>
+          <div class="contract">Salida: test_plan.md</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-execute-tests qa ejecución browser curl manual">
+          <div class="skill-top"><div class="skill-name">sky-execute-tests</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Ejecuta TCs automatizables con browser, curl, logs o comandos locales.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Elegir qué se automatiza, qué queda manual, cuánto se repite y cuánto se documenta.</p></div>
+          <div class="contract">Salida: results/ con evidencias</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-generate-test-report qa summary reporte">
+          <div class="skill-top"><div class="skill-name">sky-generate-test-report</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Consolida resultados de QA con stats, tabla de TCs, blockers y pendientes.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El veredicto debe ser claro y comparable entre features y ciclos de QA.</p></div>
+          <div class="contract">Salida: results/summary.md</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-code-review review clean architecture seguridad tests">
+          <div class="skill-top"><div class="skill-name">sky-code-review</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Revisa arquitectura, tipos, hardcodes, tests, seguridad y riesgos de regresión.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>Las reglas de calidad del equipo no deberían relajarse por workflow personal.</p></div>
+          <div class="contract">Salida: findings con archivo:línea</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-prepare-deploy release version changelog">
+          <div class="skill-top"><div class="skill-name">sky-prepare-deploy</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Prepara release con validaciones, version bump, changelog y pasos de publicación.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>Release y deploy requieren trazabilidad y orden operativo estándar.</p></div>
+          <div class="contract">Salida: repo listo para release</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="feature-branch branch limpia stage">
+          <div class="skill-top"><div class="skill-name">feature-branch</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Separa commits de un ticket en una rama limpia cuando main tiene cambios mezclados.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>Evita arrastrar cambios ajenos a Stage o release.</p></div>
+          <div class="contract">Salida: branch limpia</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-deploy-doc confluence deploy documento">
+          <div class="skill-top"><div class="skill-name">sky-deploy-doc</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Genera documentación de deploy con tickets, tags, repos, QA y pasos operativos.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El formato de deploy debe responder a operación, QA y trazabilidad del cliente.</p></div>
+          <div class="contract">Salida: página de deploy</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-release-notes release notes epic tickets commits">
+          <div class="skill-top"><div class="skill-name">sky-release-notes</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Documenta una épica o conjunto de tickets con MRs, commits y repos afectados.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El release necesita una narrativa uniforme para negocio y tecnología.</p></div>
+          <div class="contract">Salida: release_notes.md</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-release-branch release branch tag changelog">
+          <div class="skill-top"><div class="skill-name">sky-release-branch</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Crea rama de release, aplica commits, actualiza changelog/package y prepara tag.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>El proceso de release no debería depender de decisiones manuales improvisadas.</p></div>
+          <div class="contract">Salida: release/vX.Y.Z</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-debug-bug debugging triage investigación">
+          <div class="skill-top"><div class="skill-name">sky-debug-bug</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Arranca desde un síntoma, busca contexto, formula hipótesis y propone próximos pasos.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Profundidad de búsqueda, repos incluidos, tiempo invertido y nivel de automatización.</p></div>
+          <div class="contract">Salida: diagnóstico + hipótesis</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-k8s-logs kubernetes logs qa stage">
+          <div class="skill-top"><div class="skill-name">sky-k8s-logs</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Consulta logs en Kubernetes por PNR, registryId, bookingId o síntoma operativo.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Entornos, ventanas de tiempo, servicios y nivel de detalle, manteniendo guardrails de solo lectura.</p></div>
+          <div class="contract">Salida: evidencia operativa</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-trace-rabbitmq rabbitmq mensajes eventos">
+          <div class="skill-top"><div class="skill-name">sky-trace-rabbitmq</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Traza un mensaje RabbitMQ desde publisher hasta consumer e identifica mismatches.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Alcance de repos, profundidad del trace y si la verificación final queda manual o automática.</p></div>
+          <div class="contract">Salida: flujo de evento trazado</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-vulnerabilities seguridad dependencias">
+          <div class="skill-top"><div class="skill-name">sky-vulnerabilities</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Revisa dependencias, riesgos y acciones recomendadas de seguridad.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>Los criterios de seguridad no deberían depender del estilo personal del dev.</p></div>
+          <div class="contract">Salida: reporte de riesgos</div>
+        </article>
+
+        <article class="skill-card" data-level="immutable" data-search="sky-npmrc-check setup credenciales npmrc">
+          <div class="skill-top"><div class="skill-name">sky-npmrc-check</div><span class="level immutable">Inmutable</span></div>
+          <div><h4>Qué hace</h4><p>Valida configuración de acceso a paquetes privados y setup básico del entorno.</p></div>
+          <div><h4>Por qué queda fijo</h4><p>Evita errores repetidos de instalación y mantiene el setup alineado al estándar.</p></div>
+          <div class="contract">Salida: checklist de setup</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-microfrontends vue single spa frontend">
+          <div class="skill-top"><div class="skill-name">sky-microfrontends</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Guía trabajo en MFEs: single-spa, import maps, root-config, Vue y design system.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Tipo de verificación, setup local, comandos y profundidad según el MFE tocado.</p></div>
+          <div class="contract">Salida: cambios frontend compatibles</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="sky-clone-repo sky-search-repos repos gitlab">
+          <div class="skill-top"><div class="skill-name">sky-clone-repo / sky-search-repos</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Busca, clona y ubica repos de GitLab necesarios para un ticket o investigación.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Ubicación local, cantidad de repos, criterios de búsqueda y si clona o solo referencia.</p></div>
+          <div class="contract">Salida: repos disponibles o URLs</div>
+        </article>
+
+        <article class="skill-card" data-level="dev" data-search="team-onboarding onboarding nuevo dev">
+          <div class="skill-top"><div class="skill-name">/team-onboarding</div><span class="level dev">Dev</span></div>
+          <div><h4>Qué hace</h4><p>Arma una guía para un dev nuevo con mapa del área, setup y primer ticket acompañado.</p></div>
+          <div><h4>Qué puede ajustar el dev</h4><p>Área, profundidad, repos, ejercicios, checklist y ritmo de acompañamiento.</p></div>
+          <div class="contract">Salida: onboarding.md</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="sdk">
+      <div class="section-head">
+        <div class="tag">Repo / SDK</div>
+        <h2>Cómo podría verse instalado por cada persona</h2>
+        <p>El dev consume un paquete estándar y mantiene un espacio local para overrides. Lo personalizable no modifica el core; lo propone como mejora si demuestra valor para todos.</p>
+      </div>
+
+      <div class="install-grid">
+        <div class="install-card">
+          <h3>Core versionado</h3>
+          <p>Skills inmutables, formatos oficiales, templates, validaciones y reglas de cliente.</p>
+          <div class="repo-box">sky-ai-skills-core/
+  immutable/
+  templates/
+  validators/
+  changelog.md</div>
+        </div>
+        <div class="install-card">
+          <h3>Perfil del dev</h3>
+          <p>Preferencias de ejecución, budgets, comandos locales, profundidad de QA y pasos manuales.</p>
+          <div class="repo-box">~/.sky-ai/
+  profile.yml
+  overrides/
+  examples/
+  disabled-steps.yml</div>
+        </div>
+        <div class="install-card">
+          <h3>Contrato final</h3>
+          <p>Los outputs pasan por validadores para asegurar que siguen siendo compatibles con el flujo del equipo.</p>
+          <div class="repo-box">outputs/
+  spec.md
+  plan.md
+  implementation.md
+  results/summary.md
+  deploy-doc.md</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="decision">
+      <div class="section-head">
+        <div class="tag">Criterio práctico</div>
+        <h2>Cómo decidir si un skill se puede tocar</h2>
+        <p>La pregunta no es si el dev puede hacerlo mejor o peor. La pregunta es si el cambio altera el contrato final del equipo.</p>
+      </div>
+
+      <div class="decision-grid">
+        <div class="decision"><b>Cambia formato final</b><span>Debe ir al core inmutable y pasar revisión del equipo.</span></div>
+        <div class="decision"><b>Cambia solo el camino</b><span>Puede vivir como override del dev si mantiene la misma salida.</span></div>
+        <div class="decision"><b>Ahorra tokens</b><span>Permitido si el paso omitido queda manualmente cubierto y documentado.</span></div>
+        <div class="decision"><b>Agrega control</b><span>Puede empezar local; si mejora consistencia, se promueve al core.</span></div>
+      </div>
+    </section>
+
+    <footer>
+      Sky Airline - AI Skills Governance - propuesta para repo/SDK instalable.
+    </footer>
+  </div>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.filter-btn'));
+    const cards = Array.from(document.querySelectorAll('.skill-card'));
+    const search = document.getElementById('search');
+    let activeFilter = 'all';
+
+    function applyFilters() {
+      const query = search.value.trim().toLowerCase();
+      cards.forEach(card => {
+        const levelMatch = activeFilter === 'all' || card.dataset.level === activeFilter;
+        const textMatch = !query || card.dataset.search.includes(query) || card.innerText.toLowerCase().includes(query);
+        card.style.display = levelMatch && textMatch ? 'flex' : 'none';
+      });
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buttons.forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+        activeFilter = button.dataset.filter;
+        applyFilters();
+      });
+    });
+    search.addEventListener('input', applyFilters);
+  </script>
+</body>
+</html>
