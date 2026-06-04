@@ -1,0 +1,16 @@
+slug: sky-ai-skills-governance
+title: Sky AI Skills Governance
+github:
+  owner: ErickRRB
+  repo: sky-ai-skills-governance
+  url: https://github.com/ErickRRB/sky-ai-skills-governance
+pages:
+  url: https://ErickRRB.github.io/sky-ai-skills-governance/
+  source_branch: main
+  source_path: /
+local:
+  source_html: /Users/erick/Sky/sky-ai-skills-governance.html
+  published_html: /Users/erick/Sky/html-docs/sky-ai-skills-governance/index.html
+notes:
+  - Standalone static HTML served by GitHub Pages.
+  - Future generated demos should live under html-docs/<slug>/index.html.
